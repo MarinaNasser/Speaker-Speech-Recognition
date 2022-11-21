@@ -50,7 +50,7 @@ if __name__ == '__main__':
 	print('#' * 80)
 	print("Please speak word(s) into the microphone")
 	print('Press Ctrl+C to stop the recording')
-	record_to_file('1_marina_13.wav')
+	record_to_file('2_marina_30.wav')
 	
 	print("Result written to output.wav")
 	print('#' * 80)
