@@ -6,8 +6,12 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('Home.html')
+
+@app.route("/demo")
+def demo():
+    return render_template('Demo.html')
 
 
 @app.route('/record', methods=['POST'])
@@ -16,7 +20,7 @@ def save():
         file = request.files['AudioFile']
 
         file.save(os.path.join(
-            'static/assests/records/recorded_Sound.wav'))
+            'static/assets/records/recorded_Sound.wav'))
         # sr, audio = wavfile.read(
         #     'static/assets/records/assets/records/recordedAudio.wav')
         # if len(audio.shape) > 1:
