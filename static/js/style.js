@@ -55,7 +55,7 @@ startRecordingButton.addEventListener("click", function () {
         function (e) {
             console.error(e);
         });
-    save(blob)
+setTimeout(stop, 7000);
 
 });
 
@@ -155,7 +155,6 @@ function stop() {
     rightChannel = []
     recordingLength = 0
 }
-setTimeout(stop, 7000);
 
 function flattenArray(channelBuffer, recordingLength) {
     var result = new Float32Array(recordingLength);
