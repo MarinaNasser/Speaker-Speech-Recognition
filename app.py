@@ -64,7 +64,7 @@ def save():
         file.save(os.path.join(
             'static/assets/records/recorded_Sound.wav'))
         sr, audio = wavfile.read(
-            'static/assets/records/assets/records/recordedAudio.wav')
+            'static/assets/records/assets/records/recorded_Sound.wav')
         if len(audio.shape) > 1:
             audio = audio[:, 0]
         audio_features = extract_features_from_input(audio)
