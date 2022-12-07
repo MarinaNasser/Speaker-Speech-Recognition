@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect,jsonify
 import speech_recognition as sr
-import Request
+# import Request
 import numpy as np
 import pickle
 import librosa
+import os
 app = Flask(__name__)
 speaker_model = pickle.load(open('finalized_model.sav', 'rb'))
 
