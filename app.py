@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import librosa
 import os
+from scipy.io import wavfile
 app = Flask(__name__)
 speaker_model = pickle.load(open('finalized_model.sav', 'rb'))
 
@@ -62,28 +63,28 @@ def save():
 
         file.save(os.path.join(
             'static/assets/records/recorded_Sound.wav'))
-        # sr, audio = wavfile.read(
-        #     'static/assets/records/assets/records/recordedAudio.wav')
-        # if len(audio.shape) > 1:
-        #     audio = audio[:, 0]
-
-    return[]
-@app.route('/predict',methods=['POST'])
-def predict():
-    '''
-    For rendering results on HTML GUI
-    '''
-    audio_features = extract_features_from_input(request.files["file"])
-    final_features = audio_features.reshape(1,45)
-    prediction = speaker_model.predict(final_features)
-    speakers_list = [(0, 'Marina'), (1, 'Mohab'), (3, 'Yousef'), (4, 'Others')]
-    for iterator, speaker in enumerate(speakers_list):
-        if prediction[0] == speaker[0]:
-           return render_template('index.html', prediction_text='Predicted Speaker $ {}'.format(prediction[1]))
+        sr, audio = wavfile.read(
+            'static/assets/records/assets/records/recordedAudio.wav')
+        if len(audio.shape) > 1:
+            audio = audio[:, 0]
+        audio_features = extract_features_from_input(audio)
+        final_features = audio_features.reshape(1,45)
+        prediction = speaker_model.predict(final_features)
+        speakers_list = [(0, 'Marina'), (1, 'Mohab'), (3, 'Yousef'), (4, 'Others')]
+        for iterator, speaker in enumerate(speakers_list):
+            if prediction[0] == speaker[0]:
+                return render_template('demo.html', prediction_text='Predicted Speaker $ {}'.format(prediction[1]))
 
 
+# # @app.route('/predict',methods=['POST'])
+# # def predict():
+# #     '''
+# #     For rendering results on HTML GUI
+#     '''
+   
 
-if __name__ == "__main__":
-    app.run(debug=True, threaded=True)
+
+# if __name__ == "__main__":
+#     app.run(debug=True, threaded=True)
 
     
