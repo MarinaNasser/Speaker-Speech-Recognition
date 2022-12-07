@@ -1,6 +1,5 @@
 
 var startRecordingButton = document.getElementById("startRecordingButton");
-var stopRecordingButton = document.getElementById("stopRecordingButton");
 
 
 
@@ -16,6 +15,8 @@ var blob = null;
 
 startRecordingButton.addEventListener("click", function () {
     // Initialize recorder
+    startRecordingButton.textContent = 'recording';
+
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     navigator.getUserMedia(
         {
@@ -55,7 +56,7 @@ startRecordingButton.addEventListener("click", function () {
         function (e) {
             console.error(e);
         });
-    save(blob)
+    setTimeout(stop, 3000);
 
 });
 
@@ -151,11 +152,11 @@ function stop() {
     // our final blob
     blob = new Blob([view], { type: 'audio/wav' });
     save(blob)
-    leftChannel = []
-    rightChannel = []
+    leftchannel = []
+    rightchannel = []
     recordingLength = 0
+    startRecordingButton.textContent = 'record again';
 }
-setTimeout(stop, 7000);
 
 function flattenArray(channelBuffer, recordingLength) {
     var result = new Float32Array(recordingLength);

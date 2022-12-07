@@ -7,23 +7,31 @@ import librosa
 app = Flask(__name__)
 speaker_model = pickle.load(open('finalized_model.sav', 'rb'))
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    transcript = ""
-    if request.method == "POST":
-        print("FORM DATA RECEIVED")
-        if "file" not in request.files:
-            return redirect(request.url)
-        file = request.files["file"]
-        if file.filename == "":
-            return redirect(request.url)
-        if file:
-            recognizer = sr.Recognizer()
-            audioFile = sr.AudioFile(file)
-            with audioFile as source:
-                data = recognizer.record(source)
-            transcript = recognizer.recognize_google(data, key=None)
-    return render_template('index.html', transcript=transcript)
+# @app.route("/", methods=["GET", "POST"])
+# def index():
+#     transcript = ""
+#     if request.method == "POST":
+#         print("FORM DATA RECEIVED")
+#         if "file" not in request.files:
+#             return redirect(request.url)
+#         file = request.files["file"]
+#         if file.filename == "":
+#             return redirect(request.url)
+#         if file:
+#             recognizer = sr.Recognizer()
+#             audioFile = sr.AudioFile(file)
+#             with audioFile as source:
+#                 data = recognizer.record(source)
+#             transcript = recognizer.recognize_google(data, key=None)
+#     return render_template('index.html', transcript=transcript)
+
+@app.route('/')
+def home():
+    return render_template('Home.html')
+
+@app.route("/demo")
+def demo():
+    return render_template('Demo.html')
 
 
 
@@ -43,7 +51,22 @@ def extract_features_from_input(input_audio):
     for e in mfcc:
         extracted_features.append(np.mean(e))
     return np.array(extracted_features)
+       
+       
 
+@app.route('/record', methods=['POST'])
+def save():
+    if request.method == 'POST':
+        file = request.files['AudioFile']
+
+        file.save(os.path.join(
+            'static/assets/records/recorded_Sound.wav'))
+        # sr, audio = wavfile.read(
+        #     'static/assets/records/assets/records/recordedAudio.wav')
+        # if len(audio.shape) > 1:
+        #     audio = audio[:, 0]
+
+    return[]
 @app.route('/predict',methods=['POST'])
 def predict():
     '''
