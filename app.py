@@ -6,8 +6,9 @@ import pickle
 import librosa
 import os
 from scipy.io import wavfile
+from flask import jsonify
+
 app = Flask(__name__)
-speaker_model = pickle.load(open('finalized_model.sav', 'rb'))
 
 # @app.route("/", methods=["GET", "POST"])
 # def index():
@@ -38,9 +39,9 @@ def demo():
 
 
 # extract featires for a input single audio
-def extract_features_from_input(input_audio):
+def extract_features_from_input(sr,y):
     extracted_features = []
-    y, sr = librosa.load(input_audio, mono=True, duration=30)
+    # y, sr = librosa.load(input_audio, mono=True, duration=30)
     y, index = librosa.effects.trim(y)
 #     chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
     rmse = librosa.feature.rms(y=y)
@@ -58,30 +59,33 @@ def extract_features_from_input(input_audio):
 
 @app.route('/record', methods=['POST'])
 def save():
+    
     if request.method == 'POST':
+        speaker_model = pickle.load(open('finalized_model.sav', 'rb'))
+        
         file = request.files['AudioFile']
+        # final_features = request.get_json(force=True)
 
-        file.save(os.path.join(
+        audio=file.save(os.path.join(
             'static/assets/records/recorded_Sound.wav'))
         sr, audio = wavfile.read(
-            'static/assets/records/assets/records/recorded_Sound.wav')
+            'static/assets/records/recorded_Sound.wav')
         if len(audio.shape) > 1:
             audio = audio[:, 0]
-        audio_features = extract_features_from_input(audio)
+        audio_features = extract_features_from_input(sr,audio)
         final_features = audio_features.reshape(1,45)
         prediction = speaker_model.predict(final_features)
-        speakers_list = [(0, 'Marina'), (1, 'Mohab'), (3, 'Yousef'), (4, 'Others')]
+        print(prediction)
+        speakers_list = [[0, 'Marina'], [1, 'Mohab'], [3, 'Yousef'], [4, 'Others']]
         for iterator, speaker in enumerate(speakers_list):
-            if prediction[0] == speaker[0]:
-                return render_template('demo.html', prediction_text='Predicted Speaker $ {}'.format(prediction[1]))
+            if prediction[0] == speaker[iterator][0]:
+
+                
+                return jsonify({'output' :speaker[1]})
 
 
-# # @app.route('/predict',methods=['POST'])
-# # def predict():
-# #     '''
-# #     For rendering results on HTML GUI
-#     '''
-   
+
+
 
 
 if __name__ == "__main__":

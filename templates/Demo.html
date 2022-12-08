@@ -54,16 +54,15 @@
       <div class="u-clearfix u-sheet u-sheet-1">
         <h1 class="u-text u-text-default u-text-1">Test your voice</h1>
        
-    <button id="startRecordingButton" role="button"  action="{{ url_for('save')}}"method="post"  class="u-border-2 u-border-grey-75 u-btn u-btn-round u-button-style u-custom-color-1 u-hover-black u-radius-50 u-btn-1"><span class="u-file-icon u-icon u-text-white u-icon-1"><img src='../static/assets/images/709682-2d7b3bbf.png' alt=""></span><span class="text">Start recording</span></button>
+    <button id="startRecordingButton" role="button" class="u-border-2 u-border-grey-75 u-btn u-btn-round u-button-style u-custom-color-1 u-hover-black u-radius-50 u-btn-1"><span class="u-file-icon u-icon u-text-white u-icon-1"><img src='../static/assets/images/709682-2d7b3bbf.png' alt=""></span><span class="text">Start recording</span></button>
 
       </div>
     </section>
-    <!-- <form action="{{ url_for('save')}}"method="post">
 
-    </form> -->
-
-    {{ prediction_text }}
-
+    
+    <div id='output' style="color: red; text-align: center; height:30px;transform: translate(0,-170px)">
+      
+  </div>
     </div>
     
     <footer class="u-align-center u-clearfix u-footer u-grey-80 u-footer" id="sec-2f33"><div class="u-clearfix u-sheet u-sheet-1">

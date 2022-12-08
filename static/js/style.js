@@ -188,7 +188,7 @@ function writeUTFBytes(view, offset, string) {
         view.setUint8(offset + i, string.charCodeAt(i));
     }
 }
-const save = audioBlob => {
+let save = audioBlob => {
     let formdata = new FormData();
     formdata.append("AudioFile", audioBlob, "recorded_Sound.wav");
     $.ajax({
@@ -199,7 +199,9 @@ const save = audioBlob => {
         cache: false,
         processData: false,
         success: function (res) {
-
+            $('#output').text(res.output).show();
         },
     });
+    // event.preventDefault();
+
 };
