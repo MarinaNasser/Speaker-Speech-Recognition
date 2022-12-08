@@ -68,19 +68,20 @@ def save():
 
         audio=file.save(os.path.join(
             'static/assets/records/recorded_Sound.wav'))
+        path='static/assets/records/recorded_Sound.wav'
         # sr, audio = wavfile.read(
         #     'static/assets/records/recorded_Sound.wav')
         # if len(audio.shape) > 1:
         #     audio = audio[:, 0]
-        audio_features = extract_features_from_input(audio)
+        audio_features = extract_features_from_input(path)
         final_features = audio_features.reshape(1,45)
         prediction = speaker_model.predict(final_features)
         speakers_list = [(0, 'Marina'), (1, 'Mohab'), (3, 'Yousef'), (4, 'Others')]
         for iterator, speaker in enumerate(speakers_list):
             if speaker[0] == prediction[0]:
 
-                
-                return jsonify({'output' :speaker[1]})
+                predict=speaker[1]
+                return jsonify({'output' :predict})
 
 
 
