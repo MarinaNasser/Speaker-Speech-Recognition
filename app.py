@@ -39,9 +39,9 @@ def demo():
 
 
 # extract featires for a input single audio
-def extract_features_from_input(sr,y):
+def extract_features_from_input(audio):
     extracted_features = []
-    # y, sr = librosa.load(input_audio, mono=True, duration=30)
+    y, sr = librosa.load(audio, mono=True)
     y, index = librosa.effects.trim(y)
 #     chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
     rmse = librosa.feature.rms(y=y)
@@ -68,17 +68,16 @@ def save():
 
         audio=file.save(os.path.join(
             'static/assets/records/recorded_Sound.wav'))
-        sr, audio = wavfile.read(
-            'static/assets/records/recorded_Sound.wav')
-        if len(audio.shape) > 1:
-            audio = audio[:, 0]
-        audio_features = extract_features_from_input(sr,audio)
+        # sr, audio = wavfile.read(
+        #     'static/assets/records/recorded_Sound.wav')
+        # if len(audio.shape) > 1:
+        #     audio = audio[:, 0]
+        audio_features = extract_features_from_input(audio)
         final_features = audio_features.reshape(1,45)
         prediction = speaker_model.predict(final_features)
-        print(prediction)
-        speakers_list = [[0, 'Marina'], [1, 'Mohab'], [3, 'Yousef'], [4, 'Others']]
+        speakers_list = [(0, 'Marina'), (1, 'Mohab'), (3, 'Yousef'), (4, 'Others')]
         for iterator, speaker in enumerate(speakers_list):
-            if prediction[0] == speaker[iterator][0]:
+            if speaker[0] == prediction[0]:
 
                 
                 return jsonify({'output' :speaker[1]})
