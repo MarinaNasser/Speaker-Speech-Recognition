@@ -38,9 +38,9 @@ def demo():
 
 
 # extract featires for a input single audio
-def extract_features_from_input(input_audio):
+def extract_features_from_input(sr,y):
     extracted_features = []
-    y, sr = librosa.load(input_audio, mono=True, duration=30)
+    # y, sr = librosa.load(input_audio, mono=True, duration=30)
     y, index = librosa.effects.trim(y)
 #     chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
     rmse = librosa.feature.rms(y=y)
@@ -67,7 +67,7 @@ def save():
             'static/assets/records/assets/records/recorded_Sound.wav')
         if len(audio.shape) > 1:
             audio = audio[:, 0]
-        audio_features = extract_features_from_input(audio)
+        audio_features = extract_features_from_input(sr,audio)
         final_features = audio_features.reshape(1,45)
         prediction = speaker_model.predict(final_features)
         speakers_list = [(0, 'Marina'), (1, 'Mohab'), (3, 'Yousef'), (4, 'Others')]
