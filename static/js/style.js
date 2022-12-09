@@ -1,5 +1,6 @@
 
 var startRecordingButton = document.getElementById("startRecordingButton");
+var recordText = document.getElementById("recordText");
 
 
 
@@ -15,7 +16,7 @@ var blob = null;
 
 startRecordingButton.addEventListener("click", function () {
     // Initialize recorder
-    startRecordingButton.textContent = 'recording';
+    recordText.textContent = 'recording';
 
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     navigator.getUserMedia(
@@ -155,7 +156,7 @@ function stop() {
     leftchannel = []
     rightchannel = []
     recordingLength = 0
-    startRecordingButton.textContent = 'record again';
+    recordText.textContent = 'record again';
 }
 
 function flattenArray(channelBuffer, recordingLength) {
