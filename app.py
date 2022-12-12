@@ -61,7 +61,7 @@ def extract_features_from_input(audio):
 def save():
     
     if request.method == 'POST':
-        speaker_model = pickle.load(open('finalized_model.sav', 'rb'))
+        speaker_model = pickle.load(open('speaker_classifier_final.sav', 'rb'))
         
         file = request.files['AudioFile']
         # final_features = request.get_json(force=True)
@@ -76,7 +76,7 @@ def save():
         audio_features = extract_features_from_input(path)
         final_features = audio_features.reshape(1,45)
         prediction = speaker_model.predict(final_features)
-        speakers_list = [(0, 'Marina'), (1, 'Mohab'), (3, 'Yousef'), (4, 'Others')]
+        speakers_list = [(0, 'Marina'), (1, 'Mohab'), (2, 'Yousef'), (3, 'Omnia'),(4,'others')]
         for iterator, speaker in enumerate(speakers_list):
             if speaker[0] == prediction[0]:
 
