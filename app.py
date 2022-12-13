@@ -30,7 +30,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('Home1.html')
+    return render_template('Home2.html')
 
 @app.route("/demo")
 def demo():
@@ -40,7 +40,8 @@ def demo():
 
 # extract featires for a input single audio
 def extract_features_from_input(audio):
-    extracted_features = []
+    extracted_features1 = []
+    extracted_features2 = []
     y, sr = librosa.load(audio, mono=True)
     y, index = librosa.effects.trim(y)
 #     chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
@@ -49,11 +50,15 @@ def extract_features_from_input(audio):
     spec_bw = librosa.feature.spectral_bandwidth(y=y, sr=sr)
     rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)
     zcr = librosa.feature.zero_crossing_rate(y)
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc = 40)
-    extracted_features.extend([np.mean(rmse), np.mean(spec_cent),np.mean(spec_bw), np.mean(rolloff), np.mean(zcr)])
-    for e in mfcc:
-        extracted_features.append(np.mean(e))
-    return np.array(extracted_features)
+    mfcc_speaker = librosa.feature.mfcc(y=y, sr=sr, n_mfcc = 40)
+    mfcc_speech = librosa.feature.mfcc(y=y, sr=sr, n_mfcc = 60)
+    extracted_features1.extend([np.mean(rmse), np.mean(spec_cent),np.mean(spec_bw), np.mean(rolloff), np.mean(zcr)])
+    extracted_features2.extend([np.mean(rmse), np.mean(spec_cent),np.mean(spec_bw), np.mean(rolloff), np.mean(zcr)])
+    for e in mfcc_speaker:
+        extracted_features1.append(np.mean(e))
+    for e in mfcc_speech:
+        extracted_features2.append(np.mean(e))
+    return np.array(extracted_features1), np.array(extracted_features2)
        
        
 
@@ -62,27 +67,33 @@ def save():
     
     if request.method == 'POST':
         speaker_model = pickle.load(open('speaker_classifier_final.sav', 'rb'))
-        
+        speech_model = pickle.load(open('speech_classifier_final.sav', 'rb'))
         file = request.files['AudioFile']
         # final_features = request.get_json(force=True)
-
-        audio=file.save(os.path.join(
-            'static/assets/records/recorded_Sound.wav'))
+        audio=file.save(os.path.join('static/assets/records/recorded_Sound.wav'))
         path='static/assets/records/recorded_Sound.wav'
         # sr, audio = wavfile.read(
         #     'static/assets/records/recorded_Sound.wav')
         # if len(audio.shape) > 1:
         #     audio = audio[:, 0]
-        audio_features = extract_features_from_input(path)
-        final_features = audio_features.reshape(1,45)
-        prediction = speaker_model.predict(final_features)
+        speakr_final_features, speech_final_featurs = extract_features_from_input(path)
+        speakr_final_features, speech_final_featurs = speakr_final_features.reshape(1,45), speech_final_featurs.reshape(1, 65)
+        # final_features2=audio_features.reshape(1,65)
+        speaker_prediction = speaker_model.predict(speakr_final_features)
+        speech_prediction = speech_model.predict(speech_final_featurs)
         speakers_list = [(0, 'Marina'), (1, 'Mohab'), (2, 'Yousef'), (3, 'Omnia'),(4,'others')]
+        speech_list=[0,1]
         for iterator, speaker in enumerate(speakers_list):
-            if speaker[0] == prediction[0]:
-
+            if speaker[0] == speaker_prediction[0]:
                 predict=speaker[1]
-                return jsonify({'output' :predict})
-
+                if predict=='others':
+                    return jsonify({'output' :"unregisterd speaker, please try again"})
+                    
+                elif(speech_list[0]==speech_prediction[0]):
+                        
+                    return jsonify({'output' :f" Correct password, welcome { predict }"})
+                else:
+                    return jsonify({'output' :"Wrong password, please try again"})
 
 
 
