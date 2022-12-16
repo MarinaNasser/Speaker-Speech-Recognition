@@ -30,12 +30,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('Home2.html')
-
-@app.route("/demo")
-def demo():
-    return render_template('Demo.html')
-
+    return render_template('main.html')
 
 
 # extract featires for a input single audio
