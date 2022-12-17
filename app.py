@@ -62,6 +62,9 @@ def save():
         audio, sr_freq = lr.load(path)
 
         gmm_files = [ i + '.sav' for i in ['Mohab', 'Marina', 'Omnia','Yousef']]
+        gmm_files_speech = [ i + '.sav' for i in ['Close', 'Open']]
+        
+        models_speech = [pickle.load(open(fname, 'rb') )for fname in gmm_files_speech]
         models    = [pickle.load(open(fname, 'rb') )for fname in gmm_files]
         x= extract_features(audio, sr_freq)
 
@@ -74,7 +77,28 @@ def save():
 
         speaker = np.argmax(log_likelihood)
 
+        log_likelihood_speech = np.zeros(len(models_speech)) 
+        for j in range(len(models_speech)):
+            gmm = models_speech[j] 
+            scores = np.array(gmm.score(x))
+            log_likelihood_speech[j] = scores.sum()
 
+        speech = np.argmax(log_likelihood_speech)
+
+        flag_speech = False
+        flagLst = log_likelihood_speech - max(log_likelihood_speech)
+        for i in range(len(flagLst)):
+            if flagLst[i] == 0:
+                continue
+            if abs(flagLst[i]) < 0.6:
+                flag_speech = True
+
+        if flag_speech:
+            speech = 2
+
+       
+        
+      
         flag = False
         flagLst = log_likelihood - max(log_likelihood)
         for i in range(len(flagLst)):
@@ -86,18 +110,21 @@ def save():
         if flag:
             speaker = 4
 
+        
+        if speech != 1:
+            return jsonify({'output' :"Wrong password, try again."}) 
+        elif speaker == 0:
 
-        if speaker == 0:
-            return jsonify({'output' :"Mohab"})
+            return jsonify({'output' :"Correct password, welcome Mohab!"})
         elif speaker ==1:
-            return jsonify({'output' :"Marina"})
+            return jsonify({'output' :"Correct password, welcome Marina"})
         elif speaker ==2:
-            return jsonify({'output' :"Omnia"})
+            return jsonify({'output' :"Correct password, welcome Omnia!"})
         elif speaker ==3:
-            return jsonify({'output' :"Yousef"})  
+            return jsonify({'output' :"Correct password, welcome Yousef!"})  
         
         else: 
-            return jsonify({'output' :"others"}) 
+            return jsonify({'output' :"Unregistered speaker, try again."}) 
         
         
 
