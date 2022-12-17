@@ -13,6 +13,9 @@ var mediaStream = null;
 var sampleRate = 48000;
 var context = null;
 var blob = null;
+// var speaker = document.getElementById("output").textContent;
+// console.log(speaker)
+
 
 startRecordingButton.addEventListener("click", function () {
     // Initialize recorder
@@ -156,6 +159,28 @@ let save = audioBlob => {
         processData: false,
         success: function (res) {
             $('#output').text(res.output).show();
+            if (res.output == "Mohab") {
+                console.log("ay 7aga")
+                document.getElementById("spectro").src = "../static/assets/images/mohab.png";
+
+            }
+            else if (res.output == "Marina") {
+                document.getElementById("spectro").src = "../static/assets/images/marina.png";
+
+            }
+            else if (res.output == "Yousef") {
+                document.getElementById("spectro").src = "../static/assets/images/yousef.png";
+
+            }
+            else if (res.output == "Omnia") {
+                document.getElementById("spectro").src = "../static/assets/images/omnia.png";
+
+            }
+            else {
+                document.getElementById("spectro").src = "../static/assets/images/others.png";
+
+            }
+
         },
     });
     // event.preventDefault();
