@@ -10,7 +10,7 @@ import numpy as np
 import extract_feature as ef
 import python_speech_features as mfcc
 from sklearn import preprocessing
-
+import pickle
 
 app = Flask(__name__)
 
