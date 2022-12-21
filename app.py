@@ -11,6 +11,8 @@ import python_speech_features as mfcc
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
+import plotly.express as px
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -76,6 +78,20 @@ def plot_mfcc(path):
     plt.legend(bbox_to_anchor=(1.12, 1),loc='upper right')
     plt.savefig('static/assets/images/new_plot.png')
     
+
+def plot_radar (log_likelihood):
+    df = pd.DataFrame(dict(
+    value = log_likelihood,
+    variable = ['Mohab', 'Marina', 'Omnia','Yousef']))
+        
+    fig = px.line_polar(df, r = 'value', theta = 'variable', line_close = True, markers = True)
+    fig.update_polars(radialaxis=dict(visible=False,range=[-80,0]))
+    fig.update_traces(fill = 'toself')
+    fig.write_image('static/assets/images/radar.png')
+
+
+
+
     
 def extract_features(audio,rate):
     global combined  
@@ -103,7 +119,7 @@ def save():
         path='static/assets/records/recorded_Sound.wav'
         audio, sr_freq = librosa.load(path)
         plot_mfcc(path)
-
+      
         gmm_files = [ i + '.sav' for i in ['Mohab', 'Marina', 'Omnia','Yousef']]
         gmm_files_speech = [ i + '.sav' for i in ['Close', 'Open']]
         
@@ -117,11 +133,12 @@ def save():
         models_speech=[pickle.load(open(fname, 'rb') )for fname in gmm_files_speech]
         x= extract_features(audio, sr_freq)
 
-        
+        model_scores = np.zeros(len(models))
         log_likelihood = np.zeros(len(models)) 
         for j in range(len(models)):
             gmm = models[j] 
             scores = np.array(gmm.score(x))
+            model_scores[j] = scores
             log_likelihood[j] = scores.sum()
 
         speaker = np.argmax(log_likelihood)
@@ -159,6 +176,9 @@ def save():
         if flag:
             speaker = 4
 
+
+
+        plot_radar(log_likelihood= log_likelihood)
         
         if speech == 0:
             return jsonify({'output' :"Wrong password, try again."}) 

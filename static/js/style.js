@@ -4,6 +4,8 @@ var recordText = document.getElementById("recordText");
 const mfcc = document.getElementById("mfcc");
 const mfcc_url = "../static/assets/images/new_plot.png"
 
+const radar = document.getElementById("speakerRadar");
+const radar_url = "../static/assets/images/radar.png"
 
 
 var leftchannel = [];
@@ -163,6 +165,7 @@ let save = audioBlob => {
         success: function (res) {
             $('#output').text(res.output).show();
             mfcc.setAttribute("src", `${mfcc_url}?r=${new Date().getTime()}`);
+            radar.setAttribute("src", `${radar_url}?r=${new Date().getTime()}`);
 
         },
     });
