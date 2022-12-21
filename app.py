@@ -9,6 +9,8 @@ from scipy.io import wavfile
 from flask import jsonify
 import python_speech_features as mfcc
 from sklearn import preprocessing
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import cm
 
 app = Flask(__name__)
 
@@ -34,6 +36,7 @@ def calculate_delta(array):
             j+=1
         deltas[i] = ( array[index[0][0]]-array[index[0][1]] + (2 * (array[index[1][0]]-array[index[1][1]])) ) / 10
     return deltas
+
 def extract_features_from_input(input_audio):
     extracted_features = []
     y, sr = librosa.load(input_audio, mono=True)
@@ -50,6 +53,30 @@ def extract_features_from_input(input_audio):
     for e in mfcc:
         extracted_features.append(np.mean(e))
     return np.array(extracted_features)
+def plot_mfcc(path):
+    audio, sr = librosa.load(path)
+    mfcc_feature = mfcc.mfcc(audio, sr, 0.025, 0.01, 12, nfft = 2205, appendEnergy = True)    
+    mfcc_feature = preprocessing.scale(mfcc_feature)
+    mfcc_feature=np.array(mfcc_feature)
+    print(mfcc_feature.shape)
+    color = cm.rainbow(np.linspace(0, 1, 13))
+    plt.rcParams["figure.figsize"] = [16,9]
+
+    for i in range(1,13):
+        x_axis=np.arange(0,12)
+        y_axis=mfcc_feature[i]  
+        plt.plot(x_axis, y_axis, color=color[i], label=f'mfcc{i}')
+
+       
+
+    plt.xlabel("MFC coefficients")
+    plt.ylabel("values of the coefficients")
+
+    
+    plt.legend(bbox_to_anchor=(1.12, 1),loc='upper right')
+    plt.savefig('static/assets/images/new_plot.png')
+    
+    
 def extract_features(audio,rate):
     global combined  
     mfcc_feature = mfcc.mfcc(audio, rate, 0.025, 0.01, 20, nfft = 2205, appendEnergy = True)    
@@ -75,17 +102,19 @@ def save():
         audio=file.save(os.path.join('static/assets/records/recorded_Sound.wav'))
         path='static/assets/records/recorded_Sound.wav'
         audio, sr_freq = librosa.load(path)
+        plot_mfcc(path)
 
         gmm_files = [ i + '.sav' for i in ['Mohab', 'Marina', 'Omnia','Yousef']]
-        # gmm_files_speech = [ i + '.sav' for i in ['Close', 'Open']]
+        gmm_files_speech = [ i + '.sav' for i in ['Close', 'Open']]
         
-        model_speech = pickle.load(open('model.pkl', 'rb'))
+        # model_speech = pickle.load(open('model.pkl', 'rb'))
         audio_feutures=extract_features_from_input(path)
         print(audio_feutures.shape)
-        audio_feutures=audio_feutures.reshape(1,65)
+        # audio_feutures=audio_feutures.reshape(1,65)
 
-        speech_prediction=model_speech.predict(audio_feutures)
+        # speech_prediction=model_speech.predict(audio_feutures)
         models    = [pickle.load(open(fname, 'rb') )for fname in gmm_files]
+        models_speech=[pickle.load(open(fname, 'rb') )for fname in gmm_files_speech]
         x= extract_features(audio, sr_freq)
 
         
@@ -97,24 +126,24 @@ def save():
 
         speaker = np.argmax(log_likelihood)
 
-        # log_likelihood_speech = np.zeros(len(models_speech)) 
-        # for j in range(len(models_speech)):
-        #     gmm = models_speech[j] 
-        #     scores = np.array(gmm.score(x))
-        #     log_likelihood_speech[j] = scores.sum()
+        log_likelihood_speech = np.zeros(len(models_speech)) 
+        for j in range(len(models_speech)):
+            gmm = models_speech[j] 
+            scores = np.array(gmm.score(x))
+            log_likelihood_speech[j] = scores.sum()
 
-        # speech = np.argmax(log_likelihood_speech)
+        speech = np.argmax(log_likelihood_speech)
 
-        # flag_speech = False
-        # flagLst = log_likelihood_speech - max(log_likelihood_speech)
-        # for i in range(len(flagLst)):
-        #     if flagLst[i] == 0:
-        #         continue
-        #     if abs(flagLst[i]) < 0.8:
-        #         flag_speech = True
+        flag_speech = False
+        flagLst = log_likelihood_speech - max(log_likelihood_speech)
+        for i in range(len(flagLst)):
+            if flagLst[i] == 0:
+                continue
+            if abs(flagLst[i]) < 0.8:
+                flag_speech = True
 
-        # if flag_speech:
-        #     speech = 2
+        if flag_speech:
+            speech = 2
 
        
         
@@ -131,7 +160,7 @@ def save():
             speaker = 4
 
         
-        if speech_prediction[0] == 1:
+        if speech == 0:
             return jsonify({'output' :"Wrong password, try again."}) 
        
         elif speaker == 0:
@@ -142,7 +171,7 @@ def save():
         elif speaker ==2:
             return jsonify({'output' :"Omnia"})
         elif speaker ==3:
-            return jsonify({'output' :"Yousef"})  
+            return jsonify({'output' :"Yousef"}) 
         
         else: 
             return jsonify({'output' :"Unregistered speaker"}) 
@@ -162,8 +191,10 @@ def save():
         
         
 
+        
 
-
+    
+   
 
 
 if __name__ == "__main__":

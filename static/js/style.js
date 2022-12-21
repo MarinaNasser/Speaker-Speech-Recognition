@@ -1,6 +1,8 @@
 
 var startRecordingButton = document.getElementById("startRecordingButton");
 var recordText = document.getElementById("recordText");
+const mfcc = document.getElementById("mfcc");
+const mfcc_url = "../static/assets/images/new_plot.png"
 
 
 
@@ -157,29 +159,10 @@ let save = audioBlob => {
         contentType: false,
         cache: false,
         processData: false,
+
         success: function (res) {
             $('#output').text(res.output).show();
-            if (res.output == "Mohab") {
-                console.log("ay 7aga")
-                document.getElementById("spectro").src = "../static/assets/images/mohab.png";
-
-            }
-            else if (res.output == "Marina") {
-                document.getElementById("spectro").src = "../static/assets/images/marina.png";
-
-            }
-            else if (res.output == "Yousef") {
-                document.getElementById("spectro").src = "../static/assets/images/yousef.png";
-
-            }
-            else if (res.output == "Omnia") {
-                document.getElementById("spectro").src = "../static/assets/images/omnia.png";
-
-            }
-            else {
-                document.getElementById("spectro").src = "../static/assets/images/others.png";
-
-            }
+            mfcc.setAttribute("src", `${mfcc_url}?r=${new Date().getTime()}`);
 
         },
     });
