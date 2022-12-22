@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import plotly.express as px
 import pandas as pd
+import plotly.graph_objects as go
 
 app = Flask(__name__)
 
@@ -62,8 +63,8 @@ def plot_mfcc(path):
     mfcc_feature=np.array(mfcc_feature)
     print(mfcc_feature.shape)
     color = cm.rainbow(np.linspace(0, 1, 13))
-    plt.rcParams["figure.figsize"] = [16,9]
-
+    plt.rcParams["figure.figsize"] = [16,12]
+    
     for i in range(1,13):
         x_axis=np.arange(0,12)
         y_axis=mfcc_feature[i]  
@@ -71,25 +72,49 @@ def plot_mfcc(path):
 
        
 
-    plt.xlabel("MFC coefficients")
-    plt.ylabel("values of the coefficients")
-
+    plt.xlabel("MFC coefficients",fontsize=20)
+    plt.ylabel("values of the coefficients",fontsize=20)
     
-    plt.legend(bbox_to_anchor=(1.1, 1),loc='upper right')
+    # fig.write_image('static/assets/images/radar.png')
+    plt.legend(bbox_to_anchor=(1.1, 1),loc='upper right', prop={'size': 15})
     plt.savefig('static/assets/images/new_plot.png')
     plt.figure().clear
     
     
 
 def plot_radar (log_likelihood):
-    df = pd.DataFrame(dict(
-    value = log_likelihood,
-    variable = ['Mohab', 'Marina', 'Omnia','Yousef']))
+    # df = pd.DataFrame(dict(
+    # value = log_likelihood,thresohld_value=[.5,.5,.5,.5],
+    categories = ['Mohab', 'Marina', 'Omnia','Yousef']
         
-    fig = px.line_polar(df, r = 'value', theta = 'variable', line_close = True, markers = True)
-    fig.update_polars(radialaxis=dict(visible=False,range=[-100,0]))
-    fig.update_traces(fill = 'toself')
+    # fig = px.line_polar(df, r = {  }, theta = 'variable', line_close = True, markers = True)
+    # fig.update_polars(radialaxis=dict(visible=False,range=[-100,0]))
+    # fig.update_traces(fill = 'toself')
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatterpolar(
+        r=log_likelihood,
+        theta=categories,
+        fill='toself',
+        name='Product A'
+    ))
+    fig.add_trace(go.Scatterpolar(
+        r=[-30,-30,-30,-30],
+        theta=categories,
+        fill='toself',
+        name='Product B'
+    ))
+
+    fig.update_layout(
+    polar=dict(
+        radialaxis=dict(
+        visible=True,
+        range=[-45, -15]
+        )),
+    showlegend=False
+    )   
     fig.write_image('static/assets/images/radar.png')
+    
 
 
 
