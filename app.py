@@ -67,7 +67,7 @@ def plot_mfcc(path):
     for i in range(1,13):
         x_axis=np.arange(0,12)
         y_axis=mfcc_feature[i]  
-        plt.plot(x_axis, y_axis, color=color[i], label=f'mfcc{i}')
+        plt.plot(x_axis, y_axis, color=color[i], label=f'{i}')
 
        
 
@@ -75,8 +75,10 @@ def plot_mfcc(path):
     plt.ylabel("values of the coefficients")
 
     
-    plt.legend(bbox_to_anchor=(1.12, 1),loc='upper right')
+    plt.legend(bbox_to_anchor=(1.1, 1),loc='upper right')
     plt.savefig('static/assets/images/new_plot.png')
+    plt.figure().clear
+    
     
 
 def plot_radar (log_likelihood):
@@ -85,7 +87,7 @@ def plot_radar (log_likelihood):
     variable = ['Mohab', 'Marina', 'Omnia','Yousef']))
         
     fig = px.line_polar(df, r = 'value', theta = 'variable', line_close = True, markers = True)
-    fig.update_polars(radialaxis=dict(visible=False,range=[-80,0]))
+    fig.update_polars(radialaxis=dict(visible=False,range=[-100,0]))
     fig.update_traces(fill = 'toself')
     fig.write_image('static/assets/images/radar.png')
 
@@ -118,14 +120,12 @@ def save():
         audio=file.save(os.path.join('static/assets/records/recorded_Sound.wav'))
         path='static/assets/records/recorded_Sound.wav'
         audio, sr_freq = librosa.load(path)
-        plot_mfcc(path)
       
         gmm_files = [ i + '.sav' for i in ['Mohab', 'Marina', 'Omnia','Yousef']]
         gmm_files_speech = [ i + '.sav' for i in ['Close', 'Open']]
         
         # model_speech = pickle.load(open('model.pkl', 'rb'))
-        audio_feutures=extract_features_from_input(path)
-        print(audio_feutures.shape)
+        # audio_feutures=extract_features_from_input(path)
         # audio_feutures=audio_feutures.reshape(1,65)
 
         # speech_prediction=model_speech.predict(audio_feutures)
@@ -179,6 +179,7 @@ def save():
 
 
         plot_radar(log_likelihood= log_likelihood)
+        plot_mfcc(path)
         
         if speech == 0:
             return jsonify({'output' :"Wrong password, try again."}) 
@@ -196,20 +197,7 @@ def save():
         else: 
             return jsonify({'output' :"Unregistered speaker"}) 
 
-        # if speaker == 0:
 
-        #     return jsonify({'output' :"Correct password, welcome Mohab!"})
-        # elif speaker ==1:
-        #     return jsonify({'output' :"Correct password, welcome Marina"})
-        # elif speaker ==2:
-        #     return jsonify({'output' :"Correct password, welcome Omnia!"})
-        # elif speaker ==3:
-        #     return jsonify({'output' :"Correct password, welcome Yousef!"})  
-        
-        # else: 
-        #     return jsonify({'output' :"Unregistered speaker, try again."}) 
-        
-        
 
         
 
