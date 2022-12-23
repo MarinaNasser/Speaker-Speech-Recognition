@@ -118,6 +118,23 @@ def plot_radar (log_likelihood):
 
 
 
+def plot_radar_speech (log_likelihood_speech):
+    
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+    x=["open","wrong password" ],
+    y=np.abs(log_likelihood_speech),
+    name='Primary Product',
+    marker_color='indianred',
+    width=[0.1, 0.1],
+    
+))
+    max = np.max(np.abs(log_likelihood_speech))
+    fig.update_layout(yaxis_range=[max-1,max + 1])
+    
+    fig.write_image('static/assets/images/new_plot.png')
+    
+
 
     
 def extract_features(audio,rate):
@@ -204,7 +221,8 @@ def save():
 
 
         plot_radar(log_likelihood= log_likelihood)
-        plot_mfcc(path)
+        plot_radar_speech(log_likelihood_speech = log_likelihood_speech)
+        # plot_mfcc(path)
         
         if speech == 0:
             return jsonify({'output' :"Wrong password, try again."}) 
