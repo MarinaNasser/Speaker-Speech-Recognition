@@ -1,18 +1,14 @@
 from flask import Flask, render_template, request, redirect,jsonify
-import speech_recognition as sr
 # import Request
 import numpy as np
 import pickle
 import librosa 
 import os
-from scipy.io import wavfile
 from flask import jsonify
 import python_speech_features as mfcc
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
-import plotly.express as px
-import pandas as pd
 import plotly.graph_objects as go
 
 app = Flask(__name__)
