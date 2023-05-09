@@ -73,5 +73,5 @@ The API endpoints for this application are:
 
 ## Screenshots
 
-Coming soon!
+![screenshot from the website](Screenshot 2023-05-09 133547.png)
 
