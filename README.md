@@ -73,5 +73,5 @@ The API endpoints for this application are:
 
 ## Screenshots
 
-![screenshot from the website](Screenshot 2023-05-09 133547.png)
+![screenshot from the website]([Screenshot 2023-05-09 133547.png](https://github.com/MarinaNasser/Speaker-Speech-Recognition/blob/9be0289ed4cca1d270fbda32ad107cd5c13020b4/Screenshot%202023-05-09%20133547.png))
 
