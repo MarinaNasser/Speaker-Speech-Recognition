@@ -72,6 +72,7 @@ The API endpoints for this application are:
 5. Graphs will be displayed showing information about the voice.
 
 ## Screenshots
+![Screenshot 2023-05-09 133547](https://github.com/MarinaNasser/Speaker-Speech-Recognition/assets/81776523/e0205c3e-37fa-4f0b-972c-7c126b7e0a05)
 
-![screenshot from the website]([Screenshot 2023-05-09 133547.png](https://github.com/MarinaNasser/Speaker-Speech-Recognition/blob/9be0289ed4cca1d270fbda32ad107cd5c13020b4/Screenshot%202023-05-09%20133547.png))
+
 
